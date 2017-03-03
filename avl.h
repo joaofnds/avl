@@ -41,3 +41,5 @@ struct node *bst_insert(struct node *node, int value);
 void avl_inorder_print(struct node *root);
 
 void avl_indented_print(struct node *root, int level);
+
+struct node *bst_remove(struct node *node, int value);

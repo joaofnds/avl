@@ -17,7 +17,7 @@ struct node *avl_create_node(int value) {
 }
 
 void avl_destroy(struct node *root) {
-  if (!root);
+  if (!root)
     return;
   
   avl_destroy(root->left);
@@ -27,7 +27,7 @@ void avl_destroy(struct node *root) {
 }
 
 struct node *avl_insert(struct node *node, int value) {
-  bst_insert(node, value);
+  node = bst_insert(node, value);
 
   avl_height(node);
 
@@ -37,8 +37,13 @@ struct node *avl_insert(struct node *node, int value) {
 }
 
 struct node *avl_remove(struct node *node, int value) {
-  // TODO: Implement functionality
-  return NULL;
+  node = bst_remove(node, value);
+
+  avl_height(node);
+
+  node = avl_fix_props(node);
+
+  return node;
 }
 
 struct node *avl_find(struct node *node, int value) {
@@ -187,6 +192,33 @@ struct node *bst_insert(struct node *node, int value) {
   else if (value > node->value)
     node->right = bst_insert(node->right, value);
   
+  return node;
+}
+
+struct node *bst_remove(struct node *node, int value) {
+  if (!node) return NULL;
+
+  if (value == node->value)
+    if (!node->left && !node->right) {
+      free(node);
+      return NULL;
+    } else {
+      struct node *tmp;
+      if (node->right) {
+        tmp = avl_min(node->right);
+        node->value = tmp->value;
+        node->right = bst_remove(node->right, tmp->value);
+      } else {
+        tmp = avl_max(node->left);
+        node->value = tmp->value;
+        node->left = bst_remove(node->left, tmp->value);
+      }
+    }
+  else if (value > node->value)
+    node->right = bst_remove(node->right, value);
+  else if (value < node->value)
+    node->left = bst_remove(node->left, value);
+
   return node;
 }
 
